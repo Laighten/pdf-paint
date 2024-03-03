@@ -107,8 +107,9 @@ const DrawingBoard = (props) => {
     // 监听滚动条，确定画笔的位置
     const handleScroll = (e) => {
         if (e.target) {
-            containerLeft = e.target.offsetLeft - e.target.scrollLeft;
-            containerTop = e.target.offsetTop - e.target.scrollTop;
+            const container = document.getElementById('container').getBoundingClientRect();
+            containerLeft = (e.target.offsetLeft - e.target.scrollLeft) + container.left;
+            containerTop = (e.target.offsetTop - e.target.scrollTop) + container.top;
         }
     }
 
@@ -119,8 +120,9 @@ const DrawingBoard = (props) => {
             cxt.lineJoin = "round"; //context.lineJoin - 指定两条线段的连接方式
             cxt.lineWidth = 5; //线条的宽度
             const drawPaint = document.getElementById('drawPaint');
-            containerLeft = drawPaint.offsetLeft;
-            containerTop = drawPaint.offsetTop;
+            const container = document.getElementById('container').getBoundingClientRect();
+            containerLeft = drawPaint.offsetLeft + container.left;
+            containerTop = drawPaint.offsetTop + container.top;
             if (drawPaint) {
                 drawPaint.addEventListener('scroll', handleScroll);
             }
@@ -154,9 +156,11 @@ const DrawingBoard = (props) => {
             }}
             spinning={uploading}>
             <div
+                id="container"
                 style={{
                     border: '1px solid #e1e3e9',
                     height: '86vh',
+                    width: '90vw',
                     display: 'flex',
                     alignItems: 'center',
                     backgroundColor: '#e1e3e9',
