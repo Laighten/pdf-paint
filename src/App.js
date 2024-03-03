@@ -1,23 +1,10 @@
-import logo from './logo.svg';
 import './App.css';
+import PdfEditCanvas from './pdfEditCanvas';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <PdfEditCanvas src="https://d1.music.126.net/dmusic/obj/w5zCg8OAw6HDjzjDgMK_/31430690053/1157/4e52/4b0b/badd8ff12ddefd195661c4d68a8196f0.pdf?download=kalacloud-demo.pdf"/>
     </div>
   );
 }
