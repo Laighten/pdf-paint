@@ -1,40 +1,27 @@
-import React, { 
-    useEffect, useState
-} from 'react';
-import { Button, Spin } from "antd";
-import SavePdf from './savePdf';
-
-const OPERATE_ENUM = {
-    MOSAIC: 1,
-    ERASER: 2
-}
+import React, { useEffect } from 'react';
+import { Spin } from "antd";
 
 const DrawingBoard = (props) => {
     const { 
         url,
-        urls, 
         canvasRef,
         currentPage,
-        // savedData, 
         canvasList,
         setCanvasList,
-        setCurrentPage,
         widthE,
         heightE,
         rotationAngle,
         scale,
+        OPERATE_ENUM,
+        status,
+        uploading,
     } = props;
-    const [status, setStatus] = useState(OPERATE_ENUM.MOSAIC);
-    const [uploading, setUploading] = useState(false);
     let lock = false;
     let isEraser = false;
     let x = [];
     let y = [];
     let clickDrag = [];
     let eraserRadius = 10;  // 橡皮擦粗细
-    // let cxt;
-    let w;
-    let h;
     let containerLeft;
     let containerTop;
 
@@ -58,20 +45,6 @@ const DrawingBoard = (props) => {
             cxt.stroke(); // context.stroke() , 绘制当前路径
         }
     }
-
-    // 单文本复原
-    const clear = () => {
-        const canvas = canvasRef.current;
-        const cxt = canvas.getContext('2d');
-        cxt.clearRect(0, 0, w, h); //清除画布，左上角为起点
-    };
-
-    // 所有文本复原——清除canvasList即可
-    const clearAll = () => {
-        clear();
-        setCanvasList([]);
-        setCurrentPage(0); // 回到首页
-    };
 
     const resetEraser = (_x,_y, cxt) => {
         /*使用橡皮擦-提醒*/
@@ -145,8 +118,6 @@ const DrawingBoard = (props) => {
             const cxt = canvas.getContext('2d');
             cxt.lineJoin = "round"; //context.lineJoin - 指定两条线段的连接方式
             cxt.lineWidth = 5; //线条的宽度
-            w = canvas.width; // 取画布的宽
-            h = canvas.height; // 取画布的高 
             const drawPaint = document.getElementById('drawPaint');
             containerLeft = drawPaint.offsetLeft;
             containerTop = drawPaint.offsetTop;
@@ -181,108 +152,50 @@ const DrawingBoard = (props) => {
             style={{
                 zIndex: uploading ? 1000 : 0
             }}
-            spinning={uploading}>  
+            spinning={uploading}>
             <div
-                id="header"
                 style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    height: '6vh'
-                }} >
-                <div
-                    style={{
-                        marginLeft: '5vw'
-                    }}>
-                    你的合同已自动脱敏，请检查
-                </div>
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginRight: '5vw',
-                    color: '#5a7cab'
-                }}>
-                    <Button
-                        onClick={() => {
-                            setStatus(OPERATE_ENUM.MOSAIC);
-                        }}
-                        type={status === OPERATE_ENUM.MOSAIC ? 'default' : 'text'} >
-                        <img
-                            style={{
-                                marginRight: '5px',
-                                width: '12px',
-                                height: '12px'
-                            }}
-                            src="https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/31862799102/eb06/fb7c/55f0/9e9378a1079f234321c6aa8750509825.png" />
-                        添加马赛克
-                    </Button>
-                    <Button
-                        type={status === OPERATE_ENUM.ERASER ? 'default' : 'text'}
-                        onClick={() => {
-                            setStatus(OPERATE_ENUM.ERASER);
-                        }}
-                        style={{ 
-                            marginLeft: '10px',
-                        }}>
-                        <img
-                            style={{
-                                width: '12px',
-                                height: '12px',
-                                marginRight: '5px'
-                            }}
-                            src="https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/31862793838/fd86/645c/76d3/75b01f070d8071b0bf61a72e036f840a.png" />
-                        橡皮
-                    </Button>
-                    <Button
-                        type="text"
-                        onClick={clearAll}
-                        style={{ marginLeft: '10px' }}>
-                        文本复原
-                    </Button>
-                    <SavePdf
-                        urls={urls}
-                        canvasList={canvasList}
-                        setUploading={setUploading}
-                        clearAll={clearAll} />
-                </div>
-            </div>
-            <div 
-                id="drawPaint"
-                style={{
-                    position: 'relative',
                     border: '1px solid #e1e3e9',
-                    width: '90vw',
-                    height: '88vh',
-                    overflow: 'scroll',
-                    backgroundColor: '#d3d3d3',
+                    height: '86vh',
                     display: 'flex',
                     alignItems: 'center',
+                    backgroundColor: '#e1e3e9',
                     justifyContent: 'center',
                 }}>
-                <img 
+                <div
+                    id="drawPaint"
                     style={{
+                        height: '86vh',
+                        position: 'relative',
+                        overflow: 'auto',
                         width: widthE,
-                        height: heightE,
-                        transform: `scale(${scale}) rotate(${rotationAngle}deg)`
-                    }}
-                    src={url} />
-                <canvas
-                    style={{
-                        position: 'absolute',
-                        zIndex: 1,
-                        transform: `scale(${scale}) rotate(${rotationAngle}deg)`
-                    }}
-                    ref={canvasRef} 
-                    onMouseDown={onMouseDown}
-                    onMouseMove={onMouseMove}
-                    onMouseUp={onMouseUp}
-                    id="canvas"
-                    width={widthE}
-                    height={heightE}>
-                    您的浏览器不支持 canvas 标签
-                </canvas>
+                    }}>
+                    <img 
+                        style={{
+                            position: 'absolute',
+                            display: 'flex',
+                            width: widthE,
+                            height: heightE,
+                            transform: `scale(${scale}) rotate(${rotationAngle}deg)`
+                        }}
+                        src={url} />
+                    <canvas
+                        style={{
+                            position: 'absolute',
+                            display: 'flex',
+                            zIndex: 1,
+                            transform: `scale(${scale}) rotate(${rotationAngle}deg)`
+                        }}
+                        ref={canvasRef} 
+                        onMouseDown={onMouseDown}
+                        onMouseMove={onMouseMove}
+                        onMouseUp={onMouseUp}
+                        id="canvas"
+                        width={widthE}
+                        height={heightE}>
+                        您的浏览器不支持 canvas 标签
+                    </canvas>
+                </div>
             </div>
         </Spin>
     );
