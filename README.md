@@ -1,5 +1,5 @@
 ### 简介
-[web端pdf编辑工具](https://laighten.github.io/2024/02/16/web%E7%AB%AFpdf%E7%BC%96%E8%BE%91%E5%B7%A5%E5%85%B7/)
+[web端pdf编辑工具](https://laighten.cn/2024/02/16/web_pdf_editor/)
 ### 前端部署
 
 #### 必备软件
